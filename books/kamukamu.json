@@ -1,0 +1,37 @@
+{
+  "title": "かむかむ ごっくん",
+  "pages": [
+    {
+      "image": "./images/kamukamu/01.png",
+      "speech": "おいしそう。\nいただきまあす。"
+    },
+    {
+      "image": "./images/kamukamu/02.png",
+      "speech": "ぱく。ごっくん。\nぱくぱく。ごっくん。"
+    },
+    {
+      "image": "./images/kamukamu/03.png",
+      "speech": "あれえ、もう なくなった。\nおとうとは、まだ あるのに。\nずるいや。"
+    },
+    {
+      "image": "./images/kamukamu/04.png",
+      "speech": "よく かんで、\nたべて ごらんなさい。"
+    },
+    {
+      "image": "./images/kamukamu/05.png",
+      "speech": "かむかむ、もぐもぐ。"
+    },
+    {
+      "image": "./images/kamukamu/06.png",
+      "speech": "もぐもぐ、\nおいしく なった。"
+    },
+    {
+      "image": "./images/kamukamu/07.png",
+      "speech": ""
+    },
+    {
+      "image": "./images/kamukamu/08.png",
+      "speech": "いっぱい、もぐもぐ。\nおなかも、いっぱい。\nうれしいね。"
+    }
+  ]
+}
