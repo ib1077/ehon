@@ -112,3 +112,6 @@ JavaScript構文と、Service Workerの模擬試験を実施しました。全21
 - 全29画像のパスとJavaScript構文を確認。
 - Service Worker模擬試験で両作品と全29画像のキャッシュ保存、通信不能時のHOMEへの応答を確認。
 - この環境ではブラウザ実行用バイナリがなく、画面操作・実音声・HOMEアイコンからの機内モード再起動は未確認。iPhone Safari/Android Chromeの実機で確認してください。
+
+## ver. 1.2.1：絵本アイコン
+緑の背景に開いた絵本と小さな星のシンプルなアイコンへ変更。通常192/512px・maskable512px・Apple180pxを揃え、アイコンURLも変更しています。manifestのid・scope・start_urlは維持。本文・画像・再生処理は変更していません。インストール済みアイコンへの反映時期は端末によって異なります。
