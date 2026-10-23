@@ -1,7 +1,7 @@
 importScripts('./version.js');
 const CACHE_PREFIX = 'ehon-pwa-';
 const CACHE_NAME = CACHE_PREFIX + EHON_VERSION;
-const SHELL = ['./', './index.html', './version.js', './update.js', './app.js', './style.css', './manifest.webmanifest', './catalog.json', './icons/icon-192-book.png', './icons/icon-512-book.png', './icons/maskable-512-book.png', './icons/apple-touch-icon-book.png'];
+const SHELL = ['./print.html', './print.css', './print-layout.js', './print.js', './', './index.html', './version.js', './update.js', './app.js', './style.css', './manifest.webmanifest', './catalog.json', './icons/icon-192-book.png', './icons/icon-512-book.png', './icons/maskable-512-book.png', './icons/apple-touch-icon-book.png'];
 const READY = new URL('./__offline_ready__', self.registration.scope).href;
 self.addEventListener('install', event => {
  event.waitUntil((async () => {

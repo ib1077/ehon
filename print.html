@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>絵本の印刷・PDF保存</title>
+  <link rel="stylesheet" href="./print.css">
+  <style id="paperStyle"></style>
+</head>
+<body>
+  <header class="controls">
+    <a href="./">🏡 戻る</a>
+    <h1>印刷・PDF保存</h1>
+    <div class="options">
+      <label>おはなし<select id="book"></select></label>
+      <label>印刷するページ<input id="range" placeholder="すべて（例：1-4, 7, 8）" inputmode="text"><small id="pageCount"></small></label>
+      <label>用紙サイズ<select id="paper"><option>A4</option><option>A3</option><option>A5</option><option>B5</option></select></label>
+      <label>用紙の向き<select id="direction"><option value="portrait">縦</option><option value="landscape">横</option></select></label>
+      <label>用紙1枚に<select id="perSheet"><option value="1">1ページ</option><option value="2">2ページ</option><option value="4">4ページ</option></select></label>
+    </div>
+    <p class="note">空欄なら全ページ。番号はアプリのページ順です。画像は切り取らず、余白を付けて収めます。</p>
+    <button id="printBtn" disabled>印刷・PDFに保存</button>
+    <p class="note">PDFは印刷画面で「PDFに保存」を選びます。用紙サイズ・縦横をこの設定に合わせ、倍率100%・ヘッダーとフッターなしにしてください。</p>
+    <p id="status" role="status" aria-live="polite">読み込み中…</p>
+  </header>
+  <main id="preview" aria-label="印刷プレビュー"></main>
+  <script src="./print-layout.js" defer></script>
+  <script src="./print.js" defer></script>
+</body>
+</html>
