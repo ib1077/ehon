@@ -30,6 +30,7 @@ const ui = {
 let pages = [];
 let currentPage = 0;
 let playing = false;
+let paused = false;
 let runId = 0;
 let timer = null;
 let wakeLock = null;
@@ -172,7 +173,7 @@ function getJapaneseVoice() {
 
 function speak(text, token) {
   return new Promise(resolve => {
-    if (!text || !playing || token !== runId || !("speechSynthesis" in window)) return resolve();
+    if (!text || !playing || paused || token !== runId || !("speechSynthesis" in window)) return resolve();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = SETTINGS.language;
     u.rate = SETTINGS.rate;
@@ -200,7 +201,7 @@ function wait(ms, token) {
       clearTimeout(timer);
       timer = null;
       pendingWaits.delete(done);
-      resolve(playing && token === runId);
+      resolve(playing && !paused && token === runId);
     };
     pendingWaits.add(done);
     timer = setTimeout(done, ms);
@@ -242,12 +243,12 @@ async function showPage(index, token, autoAdvance = true) {
   updatePeeks();
   const page = pages[currentPage];
   await waitForImage(page.image);
-  if (!playing || token !== runId) return;
+  if (!playing || paused || token !== runId) return;
 
   const timing = selectedTiming();
   const start = performance.now();
   if (page.speech) await speak(page.speech, token);
-  if (!playing || token !== runId || !autoAdvance) return;
+  if (!playing || paused || token !== runId || !autoAdvance) return;
 
   let remain = 0;
   if (timing === "speech") {
@@ -261,7 +262,7 @@ async function showPage(index, token, autoAdvance = true) {
     const ok = await wait(remain, token);
     if (!ok) return;
   }
-  if (!playing || token !== runId) return;
+  if (!playing || paused || token !== runId) return;
   showPage(currentPage + 1, token, true);
 }
 
@@ -281,6 +282,8 @@ async function startViewer(newPages, mode = APP_MODE) {
   pages = newPages;
   currentPage = 0;
   playing = true;
+  paused = false;
+  updatePlaybackButton();
   ui.menu.hidden = true;
   ui.viewer.hidden = false;
   await requestWakeLock();
@@ -289,6 +292,8 @@ async function startViewer(newPages, mode = APP_MODE) {
 
 function stopViewer() {
   playing = false;
+  paused = false;
+  updatePlaybackButton();
   cancelPage();
   wakeLock?.release?.().catch(() => {});
   wakeLock = null;
@@ -343,15 +348,55 @@ ui.folderInput.addEventListener("change", async () => {
 });
 
 ui.homeBtn.addEventListener("click", stopViewer);
-ui.prevBtn.addEventListener("click", () => {
+function movePage(delta) {
   if (!playing) return;
   cancelPage();
-  showPage(currentPage - 1, runId, true);
+  showPage(currentPage + delta, runId, !paused);
+}
+
+function updatePlaybackButton() {
+  const button = document.querySelector("#pauseBtn");
+  button.textContent = paused ? "▶" : "Ⅱ";
+  button.setAttribute("aria-label", paused ? "現在のページから再生" : "一時停止");
+  button.setAttribute("aria-pressed", String(paused));
+}
+
+ui.prevBtn.addEventListener("click", () => movePage(-1));
+ui.nextBtn.addEventListener("click", () => movePage(1));
+document.querySelector("#backPageBtn").addEventListener("click", () => movePage(-1));
+document.querySelector("#forwardPageBtn").addEventListener("click", () => movePage(1));
+document.querySelector("#pauseBtn").addEventListener("click", () => {
+  if (!playing) return;
+  cancelPage();
+  paused = !paused;
+  updatePlaybackButton();
+  if (!paused) {
+    primeSpeechFromUserGesture();
+    showPage(currentPage, runId, true);
+  }
 });
-ui.nextBtn.addEventListener("click", () => {
-  if (!playing) return;
-  cancelPage();
-  showPage(currentPage + 1, runId, true);
+
+// Pointer Events are shared by Safari and Chrome. Only a clear horizontal
+// gesture on the picture turns a page; buttons and multi-touch are excluded.
+let swipe = null;
+ui.viewer.addEventListener("pointerdown", event => {
+  if (!event.isPrimary) { swipe = null; return; }
+  if (!playing || event.pointerType === "mouse" || event.target.closest("button")) return;
+  swipe = { id: event.pointerId, x: event.clientX, y: event.clientY, time: performance.now() };
+});
+ui.viewer.addEventListener("pointermove", event => {
+  if (!swipe || event.pointerId !== swipe.id) return;
+  const dx = Math.abs(event.clientX - swipe.x), dy = Math.abs(event.clientY - swipe.y);
+  if (dy > 35 && dy > dx) swipe = null;
+});
+ui.viewer.addEventListener("pointercancel", () => { swipe = null; });
+ui.viewer.addEventListener("pointerup", event => {
+  const start = swipe;
+  swipe = null;
+  if (!start || start.id !== event.pointerId) return;
+  const dx = event.clientX - start.x, dy = event.clientY - start.y;
+  const threshold = Math.max(55, Math.min(100, ui.viewer.clientWidth * 0.12));
+  if (performance.now() - start.time <= 1200 && Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.6) movePage(dx < 0 ? 1 : -1);
 });
 
 document.addEventListener("visibilitychange", async () => {

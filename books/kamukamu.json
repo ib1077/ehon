@@ -2,6 +2,10 @@
   "title": "かむかむ ごっくん",
   "pages": [
     {
+      "image": "./images/kamukamu/cover.png",
+      "speech": "ぱくぱく かむかむ。"
+    },
+    {
       "image": "./images/kamukamu/01.png",
       "speech": "おいしそう。\nいただきまあす。"
     },
@@ -22,12 +26,8 @@
       "speech": "かむかむ、もぐもぐ。"
     },
     {
-      "image": "./images/kamukamu/06.png",
+      "image": "./images/kamukamu/taste.png",
       "speech": "もぐもぐ、\nおいしく なった。"
-    },
-    {
-      "image": "./images/kamukamu/07.png",
-      "speech": ""
     },
     {
       "image": "./images/kamukamu/08.png",
